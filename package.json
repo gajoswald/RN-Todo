@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "uuid": "*",
+    "uuidv4": "*",
+    "expo-constants": "~13.2.4",
+    "react-native-uuid": "*",
+    "react-native-paper": "3.6.0"
+  }
+}

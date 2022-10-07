@@ -5,12 +5,17 @@ import { TodoListContext } from '../store';
 import theme from '../theme';
 
 export default ({item}) => {
-  const {openDialogue, setActiveID, removeTodo, completeTodo } = React.useContext(TodoListContext);
+  const {openTodoDialogue, setActiveTodo, removeTodo, editTodo } = React.useContext(TodoListContext);
 
-  const editTodo = (id) => {
-    setActiveID(id);
-    openDialogue();
+  const edit = (id) => {
+    setActiveTodo(id);
+    openTodoDialogue();
   }
+
+  const markComplete = (id) => {
+    setActiveTodo(id);
+    editTodo(id, {complete:true});
+  }  
 
   return (
     <Card style={styles.card}>
@@ -18,8 +23,8 @@ export default ({item}) => {
         <Paragraph >{item.text}</Paragraph>
       </Card.Content>
       <Card.Actions>
-        <Button style={styles.button} disabled={item.complete} onPress={() => completeTodo(item.id)}>Done</Button>
-        <Button style={styles.button} onPress={() => editTodo(item.id)}>Edit</Button>
+        <Button style={styles.button} disabled={item.complete} onPress={() => markComplete(item.id)}>Done</Button>
+        <Button style={styles.button} onPress={() => edit(item.id)}>Edit</Button>
         <Button style={styles.button} onPress={() => removeTodo(item.id)}>Delete</Button>
       </Card.Actions>
     </Card>

@@ -4,6 +4,7 @@ import {Portal, ThemeProvider} from 'react-native-paper';
 import Constants from 'expo-constants';
 import {TodoListContext, Provider} from './store';
 import TodoList from './components/TodoList';
+import ListList from './components/ListList';
 import EditDialogue from './components/EditDialogue';
 import theme from './theme';
 
@@ -15,7 +16,8 @@ export default function App() {
       <ThemeProvider theme={theme}>
         <SafeAreaView style={styles.container}>
           <TodoList />
-          <EditDialogue />
+          <ListList />
+          <EditDialogue />          
         </SafeAreaView>
       </ThemeProvider>
     </Provider>

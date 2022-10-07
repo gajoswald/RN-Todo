@@ -5,16 +5,21 @@ import {TodoListContext} from '../store';
 import Todo from './Todo'
 
 export default () => {
-  const {todos, addTodo, openDialogue, dialogueVisible} = useContext(TodoListContext);
-  const {activeID} = useContext(TodoListContext);
+  const {todos, addTodo, openTodoDialogue, activeList} = useContext(TodoListContext);
+  const [displayTodos, setDisplayTodos] = React.useState( [] )
+
+  React.useEffect( () => {
+    setDisplayTodos( todos.filter( todo => todo.list === activeList ) )
+  }, [todos,activeList]);
+
   const newTodo = () => {
     addTodo();
-    openDialogue();
+    openTodoDialogue();
   }
   
   return (
     <FlatList
-      data={todos}
+      data={displayTodos}
       renderItem={({item}) => <Todo item={item}/>}
       keyExtractor={item => item.id}
       ListFooterComponent={<Button onPress={() => newTodo()} >Add Todo</Button>}

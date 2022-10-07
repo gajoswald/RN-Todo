@@ -1,8 +1,9 @@
 import React from 'react';
 import uuid from 'react-native-uuid';
-import initialState from './data';
+import { INITIAL_STATE, storeState, retrieveState } from './data';
 
 const reducer = (state, action) => {
+  let changes = {}
   switch (action.type) {
     case 'addTodo': {
       const newTodo = {
@@ -10,11 +11,11 @@ const reducer = (state, action) => {
         text: 'enter text here',
         complete: false,
       };
-      return {
-        ...state,
+      Object.assign(changes, {
         activeTodo: newTodo.id,
         todos: [...state.todos, newTodo],
-      };
+      });
+      break;
     }
     case 'editTodo': {
       const todo = Object.assign(
@@ -23,37 +24,40 @@ const reducer = (state, action) => {
         action.fields // crazy JS voodoo
       );
       const otherTodos = state.todos.filter((todo) => todo.id !== action.id);
-      return {
-        ...state,
+      Object.assign(changes, {
         todos: [...otherTodos, todo],
-      };
+      });
+      break;
     }
     case 'removeTodo': {
-      return {
-        ...state,
+      Object.assign(changes, {
         todos: state.todos.filter((todo) => todo.id !== action.id),
-      };
+      });
+      break;
     }
     case 'addList': {
-      return {
-        ...state,
-        lists: [ ...state.lists, {
-          id: uuid.v4(),
-          text: action.text
-        }]
-      }  
+      Object.assign(changes, {
+        lists: [
+          ...state.lists,
+          {
+            id: uuid.v4(),
+            text: action.text,
+          },
+        ],
+      });
+      break;
     }
     case 'editList': {
-      return state
+      return state;
     }
     case 'removeList': {
-      return state
+      return state;
     }
     case 'openTodoDialogue': {
-      return {
-        ...state,
+      Object.assign(changes, {
         todoDialogueVisible: true,
-      };
+      });
+      break;
     }
     case 'closeTodoDialogue': {
       return {
@@ -72,19 +76,37 @@ const reducer = (state, action) => {
       return {
         ...state,
         activeList: action.id,
-      }
-    }    
-    default: {
-      return state;
+      };
     }
-
+    case 'updateFromAsync': {
+      Object.assign(changes, action.retrievedState)
+      break;
+    }
+    default: {
+      break;
+    }
   }
+  const newState = {
+    ...state,
+    ...changes
+  }  
+  storeState(newState);
+  return newState;
 };
 
 const TodoListContext = React.createContext();
 
-const Provider = ({ children }) => {
-  const [state, dispatch] = React.useReducer(reducer, initialState);
+const Provider = ({ children }) => { 
+  const [state, dispatch] = React.useReducer(reducer,INITIAL_STATE);
+
+  React.useEffect( () => {
+    const retrieve = async () => {
+      return await retrieveState()
+    }
+    retrieve()
+    .then( retrievedState => dispatch({ type: 'updateFromAsync', retrievedState }) )
+  },[])
+
   const value = {
     todos: state.todos,
     lists: state.lists,
@@ -113,7 +135,10 @@ const Provider = ({ children }) => {
       dispatch({ type: 'closeTodoDialogue' });
     },
     addList: (text) => {
-      dispatch({ type: 'addList', text })
+      dispatch({ type: 'addList', text });
+    },
+    updateFromAsync: (retrievedState) => {
+      dispatch({ type: 'updateFromAsync', retrievedState })
     }
   };
 

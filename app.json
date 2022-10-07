@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "todo-component-use-with-lists",
-    "slug": "snack-9db60060-c46e-4421-9b5d-d10f9e29b64f",
+    "name": "todo-component-use-with-lists-and-persistence",
+    "slug": "snack-bcc7554c-bdc5-49bb-972c-20043e493e9e",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

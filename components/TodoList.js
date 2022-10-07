@@ -9,7 +9,7 @@ export default () => {
   const [displayTodos, setDisplayTodos] = React.useState( [] )
 
   React.useEffect( () => {
-    setDisplayTodos( todos.filter( todo => todo.list === activeList ) )
+    setDisplayTodos(  todos.filter( todo => todo.list === activeList ) )
   }, [todos,activeList]);
 
   const newTodo = () => {

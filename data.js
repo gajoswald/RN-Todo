@@ -1,6 +1,8 @@
 import uuid from 'react-native-uuid';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+const STATE_KEY = "@current_state";
 
-export default {
+const INITIAL_STATE = {
   lists: [{
     id: 0,
     text: "default"
@@ -21,3 +23,25 @@ export default {
   todoDialogueVisible: false,
   listDialogueVisible: false,
 }
+
+async function storeState(value) {
+  try {
+    const json = JSON.stringify(value)
+    await AsyncStorage.setItem(STATE_KEY, json);
+    
+  } catch(e) {
+    console.log( "error storing state" );
+  }
+}
+
+async function retrieveState(key=STATE_KEY) {
+  let json;
+  try {
+    json = await AsyncStorage.getItem(key);
+  } catch( e ) {
+    console.log( `error retrieveing state ${key}` );
+  }
+  return JSON.parse(json); 
+}
+
+export { INITIAL_STATE, storeState, retrieveState };
